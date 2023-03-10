@@ -2,9 +2,14 @@
 import { NextPage } from "next"
 import { useRef, useState } from "react"
 
-const AddContactForm: NextPage = () => {
+interface IProps {
+  onSubmit: (data: any) => void
+}
+
+const AddContactForm: NextPage = ({ onSubmit }: IProps) => {
 
   const [data, setData] = useState([])
+
   const firstNameRef = useRef()
   const lastNameRef = useRef()
   const emailRef = useRef()
@@ -12,15 +17,16 @@ const AddContactForm: NextPage = () => {
 
   const submitHandler = (e) => {
     e.preventDefault()
-    console.log(
-      {
-        'name': firstNameRef.current.value,
-        'surname': lastNameRef.current.value,
-        'email': emailRef.current.value,
-        'avatar': avatarRef.current.value,
+    const data = {
+      'firstName': firstNameRef.current.value,
+      'lastName': lastNameRef.current.value,
+      'email': emailRef.current.value,
+      'avatar': avatarRef.current.value,
+    }
+    onSubmit(data, e)
 
-      })
   }
+
 
   return (
     <form className="flex flex-col gap-5" onSubmit={submitHandler}>

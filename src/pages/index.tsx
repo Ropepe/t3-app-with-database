@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import Head from 'next/head';
-// import AddContactForm from './../components/AddContactForm';
-// import ContactCard from './../components/ContactCard';
 import { PrismaClient, Contact, Prisma } from '@prisma/client';
 import { InferGetServerSidePropsType } from "next";
 import AddContactForm from 'components/AddContactForm';
@@ -20,7 +18,20 @@ export async function getServerSideProps() {
 
 
 export default function Index({ initialContacts }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+
   const [contacts, setContacts] = useState<Contact[]>(initialContacts);
+
+  async function saveContact(contact) {
+    const response = await fetch('/api/contacts', {
+      method: 'POST',
+      body: JSON.stringify(contact)
+    });
+    if (!response.ok) {
+      throw new Error('Failed to save contact');
+    }
+    return await response.json();
+  }
+
   return (
     <>
       <Head>
@@ -36,14 +47,24 @@ export default function Index({ initialContacts }: InferGetServerSidePropsType<t
           <div className="mb-3">
             <h2 className="text-3xl text-white">Add a Contact</h2>
           </div>
-          <AddContactForm />
+          <AddContactForm onSubmit={
+            async (data) => {
+              try {
+                await saveContact(data)
+                setContacts([...contacts, data])
+              }
+              catch (err) {
+                console.log(err)
+              }
+            }
+          } />
         </section>
         <section className="w-2/3 h-screen p-8">
           <div className="mb-3">
             <h2 className="text-3xl text-gray-700">Contacts</h2>
           </div>
-          {contacts.map((c, i: number) => (
-            <div className="mb-3" key={i}>
+          {contacts.map((c) => (
+            <div className="mb-3" key={c.id}>
               <ContactCard contact={c} />
             </div>
           ))}
