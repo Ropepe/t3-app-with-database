@@ -5,6 +5,7 @@ import Head from 'next/head';
 import { PrismaClient, Contact, Prisma } from '@prisma/client';
 import { InferGetServerSidePropsType } from "next";
 import AddContactForm from 'components/AddContactForm';
+import ContactCard from 'components/ContactCard';
 
 const prisma = new PrismaClient();
 
@@ -43,7 +44,7 @@ export default function Index({ initialContacts }: InferGetServerSidePropsType<t
           </div>
           {contacts.map((c, i: number) => (
             <div className="mb-3" key={i}>
-              {/* <ContactCard contact={c} /> */}
+              <ContactCard contact={c} />
             </div>
           ))}
         </section>
